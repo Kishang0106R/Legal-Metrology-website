@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute, RoleRoute } from './components/auth/ProtectedRoute'
 import { AppShell } from './components/layout/AppShell'
 import { DashboardPage, ModulePage, PublicServicesPage } from './pages/Portal'
-import { LandingPage, LoginPage } from './pages/Public'
+import { LandingPage, LoginPage, NotFoundPage } from './pages/Public'
 import { AccountStatePage, BusinessRegistrationPage, ForgotPasswordPage, LoginFormPage, ProfilePage, ResetPasswordPage } from './pages/AuthPages'
 import { UsersPage } from './pages/Users'
 import { EditOfficePage, InviteOfficerPage, NewOfficePage, OfficeDetailsPage, OfficersPage, OfficerDetailsPage, OfficesPage } from './pages/Government'
@@ -15,11 +15,15 @@ import { CompliancePage, ComplianceRunPage, ComplianceRulesPage } from './pages/
 import { DispatchSamplePage, LaboratoriesPage, LaboratoryDetailsPage, NewSamplePage, SampleDetailsPage, SamplesPage } from './pages/Laboratory'
 import { CreateViolationPage, ViolationDetailsPage, ViolationsPage } from './pages/Violation'
 import { NewReportPage, ReportDetailsPage, ReportsPage } from './pages/Reports'
+import { AuditLogPage } from './pages/AuditLog'
+import { SearchPage } from './pages/Search'
+import { NotificationsPage } from './pages/Notifications'
+import { ArchitecturePage, DeploymentChecklistPage, HelpPage, ProjectInfoPage, SystemStatusPage } from './pages/Documentation'
 
 function PortalRoute({ children, roles }: { children: React.ReactNode; roles?: import('./types/auth').Role[] }) { return <ProtectedRoute roles={roles}><AppShell>{children}</AppShell></ProtectedRoute> }
 
 export default function App() {
-	const businessRoles: import('./types/auth').Role[] = ['manufacturer', 'packer', 'importer', 'dealer']
+	const businessRoles: import('./types/auth').Role[] = ['manufacturer', 'packer', 'importer', 'dealer', 'retailer']
 	const governmentRoles: import('./types/auth').Role[] = ['super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk']
 	return <AuthProvider><Routes>
 		<Route path="/" element={<LandingPage />} /><Route path="/login" element={<LoginPage />} /><Route path="/login/department" element={<LoginFormPage type="government" />} /><Route path="/login/business" element={<LoginFormPage type="business" />} /><Route path="/register/business" element={<BusinessRegistrationPage />} /><Route path="/forgot-password" element={<ForgotPasswordPage />} /><Route path="/reset-password" element={<ResetPasswordPage />} />
@@ -36,7 +40,11 @@ export default function App() {
 		<Route path="/samples" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><SamplesPage /></PortalRoute>} /><Route path="/samples/new" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk']}><NewSamplePage /></PortalRoute>} /><Route path="/samples/:sampleId/dispatch" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk']}><DispatchSamplePage /></PortalRoute>} /><Route path="/samples/:sampleId" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><SampleDetailsPage /></PortalRoute>} /><Route path="/laboratory" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller', 'laboratory_user']}><LaboratoriesPage /></PortalRoute>} /><Route path="/laboratory/:laboratoryId" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller', 'laboratory_user']}><LaboratoryDetailsPage /></PortalRoute>} />
 		<Route path="/violations" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><ViolationsPage /></PortalRoute>} /><Route path="/violations/new" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk']}><CreateViolationPage /></PortalRoute>} /><Route path="/violations/:violationId" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><ViolationDetailsPage /></PortalRoute>} />
 		<Route path="/reports" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><ReportsPage /></PortalRoute>} /><Route path="/reports/new" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk']}><NewReportPage /></PortalRoute>} /><Route path="/reports/:reportId" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><ReportDetailsPage /></PortalRoute>} />
+		<Route path="/search" element={<PortalRoute roles={[...governmentRoles, ...businessRoles]}><SearchPage /></PortalRoute>} />
+		<Route path="/search/audit" element={<PortalRoute roles={['super_admin', 'controller', 'assistant_controller']}><AuditLogPage /></PortalRoute>} />
+		<Route path="/notifications" element={<PortalRoute><NotificationsPage /></PortalRoute>} />
+		<Route path="/help" element={<HelpPage />} /><Route path="/about" element={<ProjectInfoPage />} /><Route path="/architecture" element={<ArchitecturePage />} /><Route path="/deployment" element={<DeploymentChecklistPage />} /><Route path="/system-status" element={<RoleRoute roles={['super_admin']}><AppShell><SystemStatusPage /></AppShell></RoleRoute>} />
 		<Route path="/users" element={<RoleRoute roles={['super_admin', 'controller']}><AppShell><UsersPage /></AppShell></RoleRoute>} /><Route path="/offices" element={<PortalRoute roles={governmentRoles}><OfficesPage /></PortalRoute>} /><Route path="/offices/new" element={<PortalRoute roles={['super_admin']}><NewOfficePage /></PortalRoute>} /><Route path="/offices/:officeId/edit" element={<PortalRoute roles={['super_admin']}><EditOfficePage /></PortalRoute>} /><Route path="/offices/:officeId" element={<PortalRoute roles={governmentRoles}><OfficeDetailsPage /></PortalRoute>} /><Route path="/officers" element={<PortalRoute roles={governmentRoles}><OfficersPage /></PortalRoute>} /><Route path="/officers/new" element={<PortalRoute roles={['super_admin']}><InviteOfficerPage /></PortalRoute>} /><Route path="/officers/:officerId" element={<PortalRoute roles={governmentRoles}><OfficerDetailsPage /></PortalRoute>} />
-		{['search', 'notifications', 'settings', 'documents', 'assigned-samples'].map((module) => <Route key={module} path={`/${module}`} element={<PortalRoute><ModulePage module={module} /></PortalRoute>} />)}<Route path="*" element={<Navigate to="/" replace />} />
+		{['settings', 'documents', 'assigned-samples'].map((module) => <Route key={module} path={`/${module}`} element={<PortalRoute><ModulePage module={module} /></PortalRoute>} />)}<Route path="*" element={<NotFoundPage />} />
 	</Routes></AuthProvider>
 }

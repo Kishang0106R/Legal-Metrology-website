@@ -1,1 +1,11 @@
-{"_tag":"Error","error":{"code":"UnknownError","message":"failed to inspect service: failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; check if the path is correct and if the daemon is running: open //./pipe/dockerDesktopLinuxEngine: The system cannot find the file specified."}}
+﻿export type Status = 'Compliant' | 'Completed' | 'Active' | 'Approved' | 'Pending' | 'Under Review' | 'Requires Verification' | 'Non-Compliant' | 'Violation' | 'Rejected' | 'Draft' | 'Inactive' | 'Not Applicable'
+
+export type ModuleKey = 'offices' | 'officers' | 'businesses' | 'products' | 'inspections' | 'ocr' | 'compliance' | 'samples' | 'laboratory' | 'violations' | 'reports' | 'search' | 'notifications' | 'settings'
+
+export type Database = {
+  public: {
+    Tables: Record<string, never>
+    Views: Record<string, never>
+    Functions: Record<string, never>
+  }
+}

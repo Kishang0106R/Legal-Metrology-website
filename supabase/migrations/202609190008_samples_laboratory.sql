@@ -6,7 +6,9 @@ do $$ begin alter type public.profile_status add value if not exists 'suspended'
 create table if not exists public.laboratories (
   id uuid primary key default gen_random_uuid(), laboratory_code text not null unique, laboratory_name text not null, laboratory_type text, organization_name text, address_line_1 text, address_line_2 text, state text, district text, city text, pincode text, phone text, email text, accreditation_details text, status text not null default 'Active' check (status in ('Active', 'Inactive')), created_at timestamptz not null default timezone('utc', now()), updated_at timestamptz not null default timezone('utc', now())
 );
-alter table public.profiles add constraint profiles_laboratory_fk foreign key (laboratory_id) references public.laboratories(id) on delete restrict;
+do $$ begin
+  alter table public.profiles add constraint profiles_laboratory_fk foreign key (laboratory_id) references public.laboratories(id) on delete restrict;
+exception when duplicate_object then null; end $$;
 
 create table if not exists public.samples (
   id uuid primary key default gen_random_uuid(), sample_number text not null unique, inspection_id uuid not null references public.inspections(id) on delete restrict, business_id uuid not null references public.businesses(id) on delete restrict, product_id uuid not null references public.products(id) on delete restrict, sample_type text, sample_description text, quantity numeric check (quantity is null or quantity > 0), quantity_unit text, batch_number text, lot_number text, manufacturing_date text, expiry_date text, collection_date date not null, collection_time time, collected_by uuid references public.profiles(id) on delete restrict, collection_location text, seal_number text, sample_condition text, storage_condition text, remarks text, status text not null default 'Collected' check (status in ('Draft', 'Collected', 'Sealed', 'Dispatched', 'Received by Laboratory', 'Under Testing', 'Testing Completed', 'Report Generated', 'Report Reviewed', 'Returned', 'Cancelled')), created_at timestamptz not null default timezone('utc', now()), updated_at timestamptz not null default timezone('utc', now())
@@ -44,11 +46,17 @@ create or replace function public.validate_sample_relationships() returns trigge
 drop trigger if exists validate_sample_relationships on public.samples;
 create trigger validate_sample_relationships before insert or update on public.samples for each row execute procedure public.validate_sample_relationships();
 create or replace function public.touch_lab_updated_at() returns trigger language plpgsql as $$ begin new.updated_at = timezone('utc', now()); return new; end; $$;
+drop trigger if exists samples_updated_at on public.samples;
 create trigger samples_updated_at before update on public.samples for each row execute procedure public.touch_lab_updated_at();
+drop trigger if exists laboratories_updated_at on public.laboratories;
 create trigger laboratories_updated_at before update on public.laboratories for each row execute procedure public.touch_lab_updated_at();
+drop trigger if exists assignments_updated_at on public.sample_lab_assignments;
 create trigger assignments_updated_at before update on public.sample_lab_assignments for each row execute procedure public.touch_lab_updated_at();
+drop trigger if exists lab_tests_updated_at on public.lab_tests;
 create trigger lab_tests_updated_at before update on public.lab_tests for each row execute procedure public.touch_lab_updated_at();
+drop trigger if exists lab_results_updated_at on public.lab_test_results;
 create trigger lab_results_updated_at before update on public.lab_test_results for each row execute procedure public.touch_lab_updated_at();
+drop trigger if exists lab_reports_updated_at on public.lab_reports;
 create trigger lab_reports_updated_at before update on public.lab_reports for each row execute procedure public.touch_lab_updated_at();
 
 create or replace function public.is_lab_user(target_laboratory_id uuid) returns boolean language sql stable security definer set search_path = public as $$ select exists (select 1 from public.profiles where auth_user_id = auth.uid() and status = 'active' and user_type = 'government' and role = 'laboratory_user' and laboratory_id = target_laboratory_id) $$;
@@ -58,7 +66,7 @@ alter table public.laboratories enable row level security; alter table public.sa
 create policy laboratories_read_authenticated on public.laboratories for select to authenticated using (true);
 create policy laboratories_admin_write on public.laboratories for all to authenticated using (public.is_super_admin()) with check (public.is_super_admin());
 create policy samples_read_scoped on public.samples for select to authenticated using (public.sample_scope(id));
-create policy samples_government_insert on public.samples for insert to authenticated with check ((select user_type from public.current_profile()) = 'government' and public.sample_scope(inspection_id));
+create policy samples_government_insert on public.samples for insert to authenticated with check ((select user_type from public.current_profile()) = 'government' and exists (select 1 from public.inspections i where i.id = inspection_id and public.inspection_scope(i.office_id, business_id, i.inspector_id)));
 create policy samples_government_update on public.samples for update to authenticated using ((select user_type from public.current_profile()) = 'government' and public.sample_scope(id)) with check (public.sample_scope(id));
 create policy custody_read_scoped on public.sample_custody_events for select to authenticated using (public.sample_scope(sample_id));
 create policy custody_government_insert on public.sample_custody_events for insert to authenticated with check ((select user_type from public.current_profile()) = 'government' and public.sample_scope(sample_id));

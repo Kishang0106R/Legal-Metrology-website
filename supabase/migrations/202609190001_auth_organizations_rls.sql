@@ -7,7 +7,7 @@ do $$ begin
   create type public.user_type as enum ('government', 'business');
 exception when duplicate_object then null; end $$;
 do $$ begin
-  create type public.profile_role as enum ('super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk', 'laboratory_user', 'manufacturer', 'packer', 'importer', 'dealer');
+  create type public.profile_role as enum ('super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk', 'laboratory_user', 'manufacturer', 'packer', 'importer', 'dealer', 'retailer');
 exception when duplicate_object then null; end $$;
 do $$ begin
   create type public.profile_status as enum ('pending', 'active', 'inactive', 'suspended');
@@ -71,7 +71,7 @@ create table if not exists public.profiles (
   constraint profiles_valid_organization check (
     (user_type = 'government' and office_id is not null and business_id is null and role in ('super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk', 'laboratory_user'))
     or
-    (user_type = 'business' and business_id is not null and office_id is null and role in ('manufacturer', 'packer', 'importer', 'dealer'))
+    (user_type = 'business' and business_id is not null and office_id is null and role in ('manufacturer', 'packer', 'importer', 'dealer', 'retailer'))
   )
 );
 
@@ -127,7 +127,7 @@ begin
   values ('PENDING-' || upper(substr(replace(new.id::text, '-', ''), 1, 10)), coalesce(metadata ->> 'business_name', 'Pending business'), requested_business_type, metadata ->> 'registration_number', metadata ->> 'address', coalesce(metadata ->> 'state', 'Pending'), coalesce(metadata ->> 'district', 'Pending'), metadata ->> 'full_name', metadata ->> 'phone', new.email)
   returning id into new_business_id;
   insert into public.profiles (auth_user_id, full_name, email, phone, user_type, role, business_id, status)
-  values (new.id, coalesce(metadata ->> 'full_name', 'Business user'), new.email, metadata ->> 'phone', 'business', (case when requested_business_type = 'retailer' then 'dealer' else requested_business_type end)::public.profile_role, new_business_id, 'pending');
+  values (new.id, coalesce(metadata ->> 'full_name', 'Business user'), new.email, metadata ->> 'phone', 'business', (case when requested_business_type in ('manufacturer', 'packer', 'importer', 'dealer', 'retailer') then requested_business_type else 'dealer' end)::public.profile_role, new_business_id, 'pending');
   return new;
 end; $$;
 

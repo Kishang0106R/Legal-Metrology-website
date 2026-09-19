@@ -13,6 +13,7 @@ export const rolePermissions: Record<Role, Permission[]> = {
   packer: ['businesses.view', 'products.view', 'products.create', 'inspections.view', 'compliance.view', 'reports.view'],
   importer: ['businesses.view', 'products.view', 'products.create', 'inspections.view', 'compliance.view', 'reports.view'],
   dealer: ['businesses.view', 'products.view', 'products.create', 'inspections.view', 'compliance.view', 'reports.view'],
+  retailer: ['businesses.view', 'products.view', 'products.create', 'inspections.view', 'compliance.view', 'reports.view'],
 }
 export function hasPermission(role: Role | null | undefined, permission: Permission) { return Boolean(role && rolePermissions[role]?.includes(permission)) }
 export function canView(role: Role | null | undefined, resource: string) { return hasPermission(role, `${resource}.view`) }
