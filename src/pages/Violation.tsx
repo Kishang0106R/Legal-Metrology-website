@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Violations are created only from officer-confirmed non-compliance findings.
 // @ts-nocheck
 
@@ -1181,7 +1180,7 @@ function ViolationReportsSection({
     </section>
   )
 }
-=======
+/*
 ﻿// Violations are created only from officer-confirmed non-compliance findings.
 // @ts-nocheck
 import { FormEvent, useEffect, useState } from 'react'
@@ -1473,4 +1472,4 @@ function ViolationReportsSection({ violationId }: { violationId: string }) {
 
   return <section className="dashboard-table detail-section"><div className="table-heading"><div><p className="eyebrow">Document management</p><h2>Violation reports</h2></div></div>{reports.length === 0 ? <EmptyState icon={FileText} title="No reports generated" description="Reports specifically generated for this violation will appear here." /> : <DataTable headers={['Report Number', 'Type', 'Version', 'Status', 'Generated Date', 'Actions']}>{reports.map((report) => <tr key={report.id}><td>{report.report_number}</td><td>{report.report_type}</td><td>{report.version}</td><td><StatusBadge status={report.status} /></td><td>{report.generated_at ? new Date(report.generated_at).toLocaleDateString() : '—'}</td><td><Link className="button button-ghost button-small" to={`/reports/${report.id}`}>View</Link></td></tr>)}</DataTable>}</section>
 }
->>>>>>> shadow-work
+*/
