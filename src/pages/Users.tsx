@@ -1,0 +1,7 @@
+import { UserPlus, Users } from 'lucide-react'
+import { PageHeader, SearchBar, StatusBadge } from '../components/common/Ui'
+import { DataTable } from '../components/common/DataTable'
+import { useAuth } from '../context/AuthContext'
+import { roleLabels, userTypeLabels } from '../types/auth'
+
+export function UsersPage() { const auth = useAuth(); return <><PageHeader eyebrow="Administration" title="User management" description="Manage authorized identities and organization assignments." action={auth.hasRole('super_admin') ? <button className="button button-primary"><UserPlus size={16} /> Create government user</button> : undefined} /><div className="toolbar"><SearchBar placeholder="Search users..." /></div><div className="dashboard-table"><DataTable headers={['Name', 'Email', 'User type', 'Role', 'Office / Business', 'Status', 'Actions']}><tr><td><strong>{auth.profile?.full_name ?? 'Current user'}</strong></td><td>{auth.profile?.email ?? '—'}</td><td><span className="organization-badge"><Users size={12} /> {auth.profile ? userTypeLabels[auth.profile.user_type] : '—'}</span></td><td>{auth.profile ? roleLabels[auth.profile.role] : '—'}</td><td>{auth.profile?.office_id ?? auth.profile?.business_id ?? 'Assigned organization'}</td><td><StatusBadge status={auth.profile?.status === 'active' ? 'Active' : 'Pending'} /></td><td><button className="button button-ghost button-small">View</button></td></tr></DataTable></div></> }

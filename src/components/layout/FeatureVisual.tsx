@@ -1,0 +1,5 @@
+import { Check, ClipboardCheck, ScanLine, ShieldCheck } from 'lucide-react'
+
+export function FeatureVisual() {
+  return <div className="inspection-visual"><div className="visual-topline"><span><i className="live-dot" /> Inspection workspace</span><span>Live preview</span></div><div className="visual-panel"><div className="package-box"><div className="package-label"><small>PACKAGED COMMODITY</small><strong>GRAIN<br />FLOUR</strong><span>Net Quantity 1 kg</span></div><div className="package-seal">LM</div></div><div className="inspection-checks"><div><span className="check-icon"><Check size={13} /></span><span>Declaration captured</span><b>Verified</b></div><div><span className="check-icon"><ShieldCheck size={13} /></span><span>Requirement review</span><b>In progress</b></div><div><span className="check-icon"><ClipboardCheck size={13} /></span><span>Officer verification</span><b>Pending</b></div></div></div><div className="visual-footer"><span><ScanLine size={15} /> OCR ready</span><span>Inspection ID <strong>LM-2026-0184</strong></span></div></div>
+}
