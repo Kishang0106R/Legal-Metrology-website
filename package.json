@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "typecheck": "tsc -b --pretty false",
     "build": "tsc -b && vite build --minify=false",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed:test-users": "node scripts/seed-test-users.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",

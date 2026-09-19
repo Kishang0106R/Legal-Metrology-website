@@ -31,7 +31,9 @@ end; $$;
 drop trigger if exists validate_violation_source on public.violations;
 create trigger validate_violation_source before insert or update on public.violations for each row execute procedure public.validate_violation_source();
 create or replace function public.touch_violation_updated_at() returns trigger language plpgsql as $$ begin new.updated_at = timezone('utc', now()); return new; end; $$;
+drop trigger if exists violations_updated_at on public.violations;
 create trigger violations_updated_at before update on public.violations for each row execute procedure public.touch_violation_updated_at();
+drop trigger if exists violation_actions_updated_at on public.violation_actions;
 create trigger violation_actions_updated_at before update on public.violation_actions for each row execute procedure public.touch_violation_updated_at();
 
 create or replace function public.is_violation_manager() returns boolean language sql stable security definer set search_path = public as $$ select exists (select 1 from public.profiles where auth_user_id = auth.uid() and status = 'active' and user_type = 'government' and role in ('super_admin', 'controller', 'assistant_controller', 'inspector', 'clerk')) $$;

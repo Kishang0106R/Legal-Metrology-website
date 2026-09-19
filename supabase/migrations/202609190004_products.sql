@@ -34,7 +34,7 @@ returns boolean language sql stable security definer set search_path = public
 as $$ select exists (select 1 from public.profiles where auth_user_id = auth.uid() and status = 'active' and role in ('super_admin', 'controller', 'assistant_controller', 'clerk')) $$;
 create or replace function public.is_product_owner(target_business_id uuid)
 returns boolean language sql stable security definer set search_path = public
-as $$ select exists (select 1 from public.profiles where auth_user_id = auth.uid() and status = 'active' and user_type = 'business' and business_id = target_business_id and role in ('manufacturer', 'packer', 'importer', 'dealer')) $$;
+as $$ select exists (select 1 from public.profiles where auth_user_id = auth.uid() and status = 'active' and user_type = 'business' and business_id = target_business_id and role in ('manufacturer', 'packer', 'importer', 'dealer', 'retailer')) $$;
 
 create or replace function public.prevent_product_owner_reassignment()
 returns trigger language plpgsql security definer set search_path = public

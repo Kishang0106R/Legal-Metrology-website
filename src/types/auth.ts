@@ -1,5 +1,5 @@
 export type UserType = 'government' | 'business'
-export type Role = 'super_admin' | 'controller' | 'assistant_controller' | 'inspector' | 'clerk' | 'laboratory_user' | 'manufacturer' | 'packer' | 'importer' | 'dealer'
+export type Role = 'super_admin' | 'controller' | 'assistant_controller' | 'inspector' | 'clerk' | 'laboratory_user' | 'manufacturer' | 'packer' | 'importer' | 'dealer' | 'retailer'
 export type ProfileStatus = 'pending' | 'active' | 'inactive' | 'suspended'
 
 export type Profile = {
@@ -14,12 +14,13 @@ export type Profile = {
   business_id: string | null
   status: ProfileStatus
   avatar_url: string | null
+  is_demo?: boolean
   created_at: string
   updated_at: string
 }
 
 export const roleLabels: Record<Role, string> = {
-  super_admin: 'Super Admin', controller: 'Controller', assistant_controller: 'Assistant Controller', inspector: 'Legal Metrology Inspector', clerk: 'Clerk / Office Staff', laboratory_user: 'Laboratory User', manufacturer: 'Manufacturer', packer: 'Packer', importer: 'Importer', dealer: 'Dealer / Retailer',
+  super_admin: 'Super Admin', controller: 'Controller', assistant_controller: 'Assistant Controller', inspector: 'Legal Metrology Inspector', clerk: 'Clerk / Office Staff', laboratory_user: 'Laboratory User', manufacturer: 'Manufacturer', packer: 'Packer', importer: 'Importer', dealer: 'Dealer', retailer: 'Retailer',
 }
 
 export const userTypeLabels: Record<UserType, string> = { government: 'Government', business: 'Business' }

@@ -29,7 +29,7 @@ export const businessNavigation: NavItem[] = [
   { label: 'Dashboard', path: '/dashboard', icon: Gauge },
   { label: 'My Business', path: '/businesses', icon: Store },
   { label: 'My Products', path: '/products', icon: Package },
-  { label: 'My Applications', path: '/applications', icon: ClipboardCheck },
+  { label: 'My Applications', path: '/business-applications', icon: ClipboardCheck },
   { label: 'My Inspections', path: '/inspections', icon: ShieldCheck },
   { label: 'Compliance Information', path: '/compliance', icon: Search },
   { label: 'Reports', path: '/reports', icon: FileBarChart },
@@ -46,6 +46,7 @@ const roleNavigation: Record<Role, NavItem[]> = {
   packer: businessNavigation.concat([{ label: 'Documents', path: '/documents', icon: FileText }]),
   importer: businessNavigation.concat([{ label: 'Documents', path: '/documents', icon: FileText }]),
   dealer: businessNavigation.concat([{ label: 'Documents', path: '/documents', icon: FileText }]),
+  retailer: businessNavigation.concat([{ label: 'Documents', path: '/documents', icon: FileText }]),
 }
 
 export function getNavigationForRole(role: Role | null | undefined) {
