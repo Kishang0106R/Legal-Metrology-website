@@ -11,7 +11,7 @@
     "seed:test-users": "node scripts/seed-test-users.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.4",
+    "@supabase/supabase-js": "^2.116.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "docx": "^9.7.1",
