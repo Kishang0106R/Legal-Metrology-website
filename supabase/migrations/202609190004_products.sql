@@ -18,6 +18,9 @@ create table if not exists public.products (
   updated_at timestamptz not null default timezone('utc', now())
 );
 
+alter table public.products
+  add constraint products_id_business_id_unique unique (id, business_id);
+
 create sequence if not exists public.product_code_seq;
 create or replace function public.next_product_code()
 returns text language sql security definer set search_path = public

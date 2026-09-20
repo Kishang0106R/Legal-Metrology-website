@@ -109,7 +109,7 @@ insert into public.legislations (legislation_code, legislation_name, legislation
 ('LMPCR-2011', 'Legal Metrology (Packaged Commodities) Rules', 'Rules', 2011, 'Rules concerning packaged commodities and related declarations.', 'India')
 on conflict (legislation_code) do nothing;
 insert into public.compliance_rules (legislation_id, rule_code, section_or_rule, rule_title, requirement, description, check_type, configuration, priority, version, effective_from, status, legal_notes)
-select l.id, r.rule_code, null, r.title, r.requirement, r.description, 'presence', jsonb_build_object('field', r.field_name, 'required', true), 'Normal', '1.0', '2026-01-01', 'Active', 'Application rule identifier only. Applicability requires officer review.'
+select l.id, r.rule_code, null, r.title, r.requirement, r.requirement, 'presence', jsonb_build_object('field', r.field_name, 'required', true), 'Normal', '1.0', '2026-01-01', 'Active', 'Application rule identifier only. Applicability requires officer review.'
 from public.legislations l cross join (values
 ('PC-DECLARATION-MANUFACTURER', 'Manufacturer / packer / importer identification', 'A responsible entity declaration was detected.', 'manufacturer_name'),
 ('PC-DECLARATION-ADDRESS', 'Address information', 'An address declaration was detected.', 'manufacturer_address'),
@@ -118,5 +118,5 @@ from public.legislations l cross join (values
 ('PC-DECLARATION-DATE', 'Relevant date or month-year declaration', 'A date-related declaration was detected.', 'date_of_manufacture'),
 ('PC-DECLARATION-CONSUMER-CARE', 'Consumer care information', 'Consumer care information was detected.', 'consumer_care_phone'),
 ('PC-DECLARATION-ORIGIN', 'Country of origin where applicable', 'Country of origin information was detected where applicable.', 'country_of_origin')
-) as r(rule_code, title, requirement, field_name) on l.legislation_code = 'LMPCR-2011'
+) as r(rule_code, title, requirement, field_name) where l.legislation_code = 'LMPCR-2011'
 on conflict (rule_code, version) do nothing;
