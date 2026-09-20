@@ -86,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(friendlyError(error))
       return { error }
     }
-    const result = await supabase.auth.signInWithOtp({ email: normalizedEmail, options: { shouldCreateUser: false } })
+    const result = await supabase.auth.signInWithOtp({ email: normalizedEmail })
     if (result.error) setError(friendlyError(result.error))
     else setError(null)
     return result
@@ -108,7 +108,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!mounted) return
       setSession(nextSession)
       if (!nextSession) { setProfile(null); setLoading(false); return }
+      
+      setLoading(true)
+
       const { data, error: profileError } = await client.from('profiles').select('*').eq('auth_user_id', nextSession.user.id).single()
+      
+      console.log('AUTH USER:', nextSession.user.id)
+      console.log('PROFILE RESULT:', data, profileError)
       if (!mounted) return
       setProfile(data as Profile | null)
       setError(profileError ? 'Your account profile could not be loaded. Please contact an administrator.' : null)

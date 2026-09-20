@@ -1,4 +1,7 @@
 -- Legal Metrology Stage 6: central inspection records, assignments, and private evidence.
+alter table public.products
+  add constraint products_id_business_id_unique unique (id, business_id);
+  
 create table if not exists public.inspections (
   id uuid primary key default gen_random_uuid(),
   inspection_number text not null unique,
